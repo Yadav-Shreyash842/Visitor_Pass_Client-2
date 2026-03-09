@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Download, Calendar, Clock, User, CreditCard, CheckCircle, XCircle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import jsPDF from 'jspdf';
 
@@ -21,12 +21,7 @@ const MyPass = () => {
       setLoading(true);
       
       // First, get the visitor record based on user email
-      const visitorRes = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/visitors`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }
-      );
+      const visitorRes = await api.get('/visitors');
       
       // API returns array directly, not wrapped in object
       const visitors = Array.isArray(visitorRes.data) ? visitorRes.data : [];
@@ -46,12 +41,7 @@ const MyPass = () => {
 
       // If visitor is approved, fetch their pass
       if (myVisitor.status === 'approved') {
-        const passRes = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/pass`,
-          {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-          }
-        );
+        const passRes = await api.get('/pass');
 
         // API returns array directly
         const passes = Array.isArray(passRes.data) ? passRes.data : [];

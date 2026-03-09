@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, FileText, Users, Upload, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 
 const RegisterVisitor = () => {
   const navigate = useNavigate();
@@ -55,10 +55,7 @@ const RegisterVisitor = () => {
     setError('');
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/visitors/createVisitor`,
-        formData
-      );
+      const response = await api.post('/visitors/createVisitor', formData);
 
       alert('Visitor registration submitted successfully! You will receive an email once your application is reviewed.');
       navigate('/login');

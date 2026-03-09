@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, Briefcase, Shield, Save, Edit2, X } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
@@ -73,13 +73,7 @@ const Profile = () => {
         updateData.newPassword = formData.newPassword;
       }
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
-        updateData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }
-      );
+      const response = await api.put('/auth/profile', updateData);
 
       // Update auth context with new user data
       if (updateUser) {

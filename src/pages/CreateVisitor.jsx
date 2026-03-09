@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, FileText, Users, Upload, AlertCircle, CheckCircle } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
 const CreateVisitor = () => {
@@ -57,13 +57,7 @@ const CreateVisitor = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/visitors/createVisitor`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }
-      );
+      const response = await api.post('/visitors/createVisitor', formData);
 
       setMessage({ type: 'success', text: 'Visitor created successfully!' });
       
