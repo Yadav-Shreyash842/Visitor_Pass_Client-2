@@ -10,6 +10,7 @@ const QRScanner = () => {
   const [manualCode, setManualCode] = useState('');
   const scannerRef = useRef(null);
   const html5QrCodeRef = useRef(null);
+  const [shouldStartScanner, setShouldStartScanner] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -19,15 +20,34 @@ const QRScanner = () => {
     };
   }, []);
 
-  const startScanning = async () => {
+  // Initialize scanner when element is ready
+  useEffect(() => {
+    if (shouldStartScanner && scanning) {
+      initializeScanner();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldStartScanner, scanning]);
+
+  const waitForElement = async (elementId, maxAttempts = 20) => {
+    for (let i = 0; i < maxAttempts; i++) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        return element;
+      }
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return null;
+  };
+
+  const initializeScanner = async () => {
     try {
-      setError(null);
-      setResult(null);
+      // Wait for the element to be available in DOM
+      const qrReaderElement = await waitForElement("qr-reader");
       
-      // Check if element exists
-      const qrReaderElement = document.getElementById("qr-reader");
       if (!qrReaderElement) {
-        setError("QR reader element not found. Please refresh the page.");
+        setError("QR reader element not found. Please try again.");
+        setScanning(false);
+        setShouldStartScanner(false);
         return;
       }
       
@@ -49,29 +69,45 @@ const QRScanner = () => {
         }
       );
 
-      setScanning(true);
+      setShouldStartScanner(false);
     } catch (err) {
       console.error("Camera error:", err);
+      setScanning(false);
+      setShouldStartScanner(false);
       
       // Provide detailed error message based on error type
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setError("Camera access denied. Please allow camera permissions in your browser settings and refresh the page.");
+        setError("Camera access denied. Please allow camera permissions in your browser settings.");
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
         setError("No camera found. Please connect a camera or use manual entry below.");
       } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
         setError("Camera is in use by another application. Please close other apps using the camera.");
       } else if (err.name === 'OverconstrainedError') {
         setError("Camera constraints not supported. Trying fallback...");
-        // Try with default constraints
         tryFallbackCamera();
       } else {
-        setError("Failed to start camera. Please check permissions and try manual entry.");
+        setError("Failed to start camera: " + err.message + ". Please use manual entry.");
       }
     }
   };
 
+  const startScanning = () => {
+    setError(null);
+    setResult(null);
+    setScanning(true);
+    setShouldStartScanner(true);
+  };
+
   const tryFallbackCamera = async () => {
     try {
+      const qrReaderElement = await waitForElement("qr-reader");
+      
+      if (!qrReaderElement) {
+        setError("QR reader element not found. Please use manual entry below.");
+        setScanning(false);
+        return;
+      }
+      
       const html5QrCode = new Html5Qrcode("qr-reader");
       html5QrCodeRef.current = html5QrCode;
 
@@ -88,11 +124,11 @@ const QRScanner = () => {
         }
       );
 
-      setScanning(true);
       setError(null);
     } catch (err) {
       console.error("Fallback camera error:", err);
       setError("Camera initialization failed. Please use manual entry below.");
+      setScanning(false);
     }
   };
 
