@@ -14,6 +14,8 @@ import MyPass from './pages/MyPass';
 import Profile from './pages/Profile';
 import RegisterVisitor from './pages/RegisterVisitor';
 import CreateVisitor from './pages/CreateVisitor';
+import Events from './pages/Events';
+import WatchmanDashboard from './pages/WatchmanDashboard';
 
 // Layout
 import Layout from './components/layout/Layout';
@@ -36,11 +38,9 @@ const ProtectedRoute = ({ children }) => {
 // Role-based redirect component
 const RoleBasedRedirect = () => {
   const { user } = useAuth();
-  
-  if (user?.role?.toLowerCase() === 'visitor') {
-    return <Navigate to="/my-pass" replace />;
-  }
-  
+  const role = user?.role?.toLowerCase();
+  if (role === 'visitor') return <Navigate to="/my-pass" replace />;
+  if (role === 'watchman') return <Navigate to="/watchman" replace />;
   return <Navigate to="/dashboard" replace />;
 };
 
@@ -81,7 +81,9 @@ function App() {
           <Route path="checklogs" element={<CheckLogs />} />
           <Route path="scanner" element={<QRScanner />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="events" element={<Events />} />
           <Route path="my-pass" element={<MyPass />} />
+          <Route path="watchman" element={<WatchmanDashboard />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 

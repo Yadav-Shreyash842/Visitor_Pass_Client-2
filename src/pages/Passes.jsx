@@ -128,15 +128,12 @@ const Passes = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Visitor Passes</h1>
-        <p className="text-gray-500 mt-1">View and manage visitor passes</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Visitor Passes</h1>
+        <p className="text-gray-500 text-sm mt-0.5">View and manage visitor passes</p>
       </div>
-
-      {/* Passes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {passes.length === 0 ? (
           <div className="col-span-full bg-white rounded-xl shadow-sm p-12 text-center border border-gray-100">
             <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-4" />

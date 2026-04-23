@@ -136,6 +136,7 @@ const Register = () => {
                 <option value="security" className="text-gray-900">Security</option>
                 <option value="admin" className="text-gray-900">Admin</option>
                 <option value="visitor" className="text-gray-900">Visitor</option>
+                <option value="watchman" className="text-gray-900">Watchman</option>
               </select>
             </div>
 

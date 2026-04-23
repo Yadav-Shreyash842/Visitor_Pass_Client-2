@@ -43,16 +43,14 @@ const Dashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch visitors
-      const visitorsRes = await api.get('/visitors/all');
+      // Fetch all data in parallel
+      const [visitorsRes, passesRes, logsRes] = await Promise.all([
+        api.get('/visitors/all'),
+        api.get('/pass'),
+        api.get('/checklog')
+      ]);
       const visitors = visitorsRes.data || [];
-      
-      // Fetch passes
-      const passesRes = await api.get('/pass');
       const passes = passesRes.data || [];
-      
-      // Fetch check logs
-      const logsRes = await api.get('/checklog');
       const logs = logsRes.data || [];
 
       // Calculate stats
@@ -96,12 +94,12 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Welcome back! Here's what's happening today.</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500 mt-1 text-sm sm:text-base">Welcome back! Here's what's happening today.</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         <StatsCard
           title="Total Visitors"
           value={stats.totalVisitors}
@@ -132,13 +130,13 @@ const Dashboard = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Visitors Chart */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Visitors This Week
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={visitorData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="name" stroke="#9ca3af" />
@@ -157,11 +155,11 @@ const Dashboard = () => {
         </div>
 
         {/* Check-ins Chart */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Check-ins Trend
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={checkinData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="name" stroke="#9ca3af" />
@@ -186,7 +184,7 @@ const Dashboard = () => {
             </div>
           ) : (
             recentActivity.map((activity, index) => (
-              <div key={index} className="p-6 hover:bg-gray-50 transition">
+              <div key={index} className="p-3 sm:p-6 hover:bg-gray-50 transition">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">

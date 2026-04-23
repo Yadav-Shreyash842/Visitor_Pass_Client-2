@@ -20,10 +20,7 @@ const MyPass = () => {
     try {
       setLoading(true);
       
-      // First, get the visitor record based on user email
       const visitorRes = await api.get('/visitors');
-      
-      // API returns array directly, not wrapped in object
       const visitors = Array.isArray(visitorRes.data) ? visitorRes.data : [];
       
       // Find visitor record matching user's email
@@ -39,19 +36,14 @@ const MyPass = () => {
 
       setVisitor(myVisitor);
 
-      // If visitor is approved, fetch their pass
-      if (myVisitor.status === 'approved') {
+      // If visitor is approved or checked-in, fetch their pass
+      if (myVisitor.status === 'approved' || myVisitor.status === 'checked-in') {
         const passRes = await api.get('/pass');
-
-        // API returns array directly
         const passes = Array.isArray(passRes.data) ? passRes.data : [];
-        
-        // Find pass for this visitor
         const myPass = passes.find(
           p => p.visitor?._id === myVisitor._id || p.visitor === myVisitor._id
         );
-
-        setPass(myPass);
+        setPass(myPass || null);
       }
 
       setLoading(false);

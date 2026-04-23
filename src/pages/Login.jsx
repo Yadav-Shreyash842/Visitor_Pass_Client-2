@@ -19,7 +19,11 @@ const Login = () => {
     const result = await login(email, password);
     
     if (result.success) {
-      navigate('/dashboard');
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const role = userData.role?.toLowerCase();
+      if (role === 'visitor') navigate('/my-pass');
+      else if (role === 'watchman') navigate('/watchman');
+      else navigate('/dashboard');
     } else {
       setError(result.message);
     }
